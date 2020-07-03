@@ -77,7 +77,7 @@ func formatter(i interface{}, size int) (s string) {
 		if len(b) == 0 {
 			s = "[]byte{0...}"
 		} else if utf8.Valid(i) {
-			s = fmt.Sprintf("[]byte{%x}", string(i))
+			s = fmt.Sprintf("[]byte{%x}", i)
 		} else {
 			s = fmt.Sprintf("%#v", i)
 		}
@@ -103,7 +103,13 @@ func Format(args ...interface{}) string {
 	for i, arg := range args {
 		parts[i] = formatter(arg, formatSize)
 	}
-	return strings.Join(parts, ", ")
+	if len(parts) == 0 {
+		return ""
+	}
+	for i := range parts {
+		parts[i] = "\t" + parts[i]
+	}
+	return "\n" + strings.Join(parts, "\n") + "\n"
 }
 
 func ID() uint64 {

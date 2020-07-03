@@ -1,0 +1,9 @@
+package main
+
+func someBytes(b []byte) {
+	return
+}
+
+func main() {
+	someBytes([]byte{0x61, 0x62, 0x63})
+}

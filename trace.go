@@ -19,10 +19,10 @@ import (
 
 var (
 	importName = "__log"
-	importPath = `"github.com/jbardin/gotrace/log"`
+	importPath = `"github.com/voje/gotrace/log"`
 
 	importStmt = `
-import __log "github.com/jbardin/gotrace/log"
+import __log "github.com/voje/gotrace/log"
 `
 
 	setup = `
@@ -178,24 +178,21 @@ func (e *editList) inspect(node ast.Node) bool {
 }
 
 func createBackup(file, bkpFile string) {
-	log.Printf("Backing up: %s -> %s", file, bkpFile)
 	fsrc, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("a")
 	defer fsrc.Close()
-	fdst, err := os.OpenFile(bkpFile, os.O_RDWR|os.O_CREATE, 0755)
+	fdst, err := os.OpenFile(bkpFile, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("b")
 	defer fdst.Close()
 	_, err = io.Copy(fdst, fsrc)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("c")
+	log.Printf("Backed up: %s -> %s", file, bkpFile)
 }
 
 // Get the name of the backup copy. Create one if it doesn't exist.
