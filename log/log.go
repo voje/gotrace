@@ -104,7 +104,7 @@ func Format(args ...interface{}) string {
 		return ""
 	}
 	for i := range parts {
-		parts[i] = "\t" + parts[i]
+		parts[i] = "--\t" + parts[i]
 	}
 	return "\n" + strings.Join(parts, "\n") + "\n"
 }
