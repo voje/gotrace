@@ -183,16 +183,19 @@ func createBackup(file, bkpFile string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("a")
 	defer fsrc.Close()
-	fdst, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE, 0755)
+	fdst, err := os.OpenFile(bkpFile, os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("b")
 	defer fdst.Close()
-	_, err = io.Copy(fsrc, fdst)
+	_, err = io.Copy(fdst, fsrc)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("c")
 }
 
 // Get the name of the backup copy. Create one if it doesn't exist.
