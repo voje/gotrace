@@ -1,19 +1,18 @@
 package main
 
-import __log "github.com/voje/gotrace/log"
-
 func someBytes(b []byte) {
-	__traceID := __log.ID()
-	__log.L.Printf("[%d] someBytes(%s)\n", __traceID, __log.Format(b))
+	return
+}
 
+func someUInts(a, b, c []uint8) {
 	return
 }
 
 func main() {
-	__traceID := __log.ID()
-	__log.L.Printf("[%d] main(%s)\n", __traceID, __log.Format())
-
 	someBytes([]byte{0x61, 0x62, 0x63})
+	someUInts(
+		[]uint8{1, 2, 3},
+		[]uint8{88, 89, 99},
+		[]uint8{0xff, 0x32, 0x1f},
+	)
 }
-
-var _ = __log.Setup("stderr", "", 1024)

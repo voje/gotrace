@@ -13,7 +13,6 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	"unicode/utf8"
 )
 
 // counter to mark each call so that entry and exit points can be correlated
@@ -76,10 +75,8 @@ func formatter(i interface{}, size int) (s string) {
 		b := []byte(i)
 		if len(b) == 0 {
 			s = "[]byte{0...}"
-		} else if utf8.Valid(i) {
-			s = fmt.Sprintf("[]byte{%x}", i)
 		} else {
-			s = fmt.Sprintf("%#v", i)
+			s = fmt.Sprintf("[]byte{ %+x }", i)
 		}
 	case string:
 		s = fmt.Sprintf("%q", i)
