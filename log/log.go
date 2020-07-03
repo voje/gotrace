@@ -72,12 +72,12 @@ func formatter(i interface{}, size int) (s string) {
 			s = fmt.Sprintf("&strings.Reader{%q}", f)
 		}
 	case []byte:
-		// bytes slices are often empty, so trim them down
-		b := bytes.TrimLeft(i, "\x00")
+		// Format byte slices as hex strings.
+		b := []byte(i)
 		if len(b) == 0 {
 			s = "[]byte{0...}"
 		} else if utf8.Valid(i) {
-			s = fmt.Sprintf("[]byte{%q}", i)
+			s = fmt.Sprintf("[]byte{%x}", string(i))
 		} else {
 			s = fmt.Sprintf("%#v", i)
 		}

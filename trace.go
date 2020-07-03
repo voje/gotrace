@@ -8,6 +8,7 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -176,24 +177,56 @@ func (e *editList) inspect(node ast.Node) bool {
 	return true
 }
 
+func createBackup(file, bkpFile string) {
+	log.Printf("Backing up: %s -> %s", file, bkpFile)
+	fsrc, err := os.Open(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fsrc.Close()
+	fdst, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fdst.Close()
+	_, err = io.Copy(fsrc, fdst)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// Get the name of the backup copy. Create one if it doesn't exist.
+func getBackup(file string) string {
+	bkpFile := file + ".gotrace.orig"
+	_, err := os.Stat(bkpFile)
+	if os.IsNotExist(err) {
+		createBackup(file, bkpFile)
+	} else if err != nil {
+		log.Fatal(err)
+	}
+	return bkpFile
+}
+
 func annotateFile(file string) {
-	orig, err := ioutil.ReadFile(file)
+	bkpFile := getBackup(file)
+
+	orig, err := ioutil.ReadFile(bkpFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	src, err := annotate(file, orig)
+	annotated, err := annotate(bkpFile, orig)
 	if err != nil {
 		log.Printf("%s: skipping %s", err, file)
 		return
 	}
 
 	if !writeFiles {
-		fmt.Println(string(src))
+		fmt.Println(string(annotated))
 		return
 	}
 
-	err = ioutil.WriteFile(file, src, 0)
+	err = ioutil.WriteFile(file, annotated, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
